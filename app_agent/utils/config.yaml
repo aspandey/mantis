@@ -1,0 +1,18 @@
+# Models and API configurations
+# GENERATIVE_MODEL: "phi3:mini"
+# GENERATIVE_MODEL: "gemma3:1b"
+GENERATIVE_MODEL: "llama3.2:latest"
+EMBEDDING_MODEL: "nomic-embed-text"
+OLLAMA_API: "http://localhost:11434/api"
+
+# MCP Server URLs
+# KITE_MCP_SERVER: "https://mcp.kite.trade/sse"
+# LOCAL_MCP_SERVER: "http://127.0.0.1:8000/app"
+
+MCP_SERVERS: {
+    "kite": "https://mcp.kite.trade/sse",
+    "flight": "http://127.0.0.1:8000/app"
+}
+
+# Logging configuration
+AGENT_LOG_FILE: "/var/log/agent.log"
