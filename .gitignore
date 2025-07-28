@@ -1,0 +1,57 @@
+# Python bytecode and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so # C extensions
+
+# Virtual environment directories
+venv/
+.venv/
+env/
+.env/
+.conda/  # For Anaconda/Miniconda environments
+conda_env/
+*/venv/  # Ignore venvs that might be in subdirectories
+
+
+# CRITICAL FOR SECURITY
+.env
+.flaskenv # Flask specific .env file
+*.sqlite3 # SQLite database files, often contain sensitive data or dynamic state
+*.db      # Generic database files
+
+# Editor and IDE specific files
+.idea/                 # JetBrains IDEs (PyCharm, IntelliJ)
+.vscode/               # VS Code
+*.sublime-project
+*.sublime-workspace
+.DS_Store              # macOS specific files
+Thumbs.db              # Windows specific files
+
+# Build artifacts
+dist/
+build/
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test and coverage reports
+.pytest_cache/
+.cache/        # General cache directory
+
+
+# Docker-related files (if not part of the final build context)
+.dockerignore             # Often committed, but sometimes you might ignore generated ones
+*.log                     # General log files (should usually be ignored)
+
+# Application-specific log files
+logs/
+*.log
+
+# Miscellaneous temporary files
+*.tmp
+*.bak
+*.swp   # Vim swap files
+*~      # Emacs backup files

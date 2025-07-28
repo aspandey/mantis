@@ -1,0 +1,7 @@
+
+log_file_location: "logs/application.log"
+default_timeout_seconds: 10
+mcp_server_name: "app_mcp_server"
+API_KEY_LOC: "/usr/local/api_key"
+mcp_server_port: 8000
+WEATHER_URL: "https://api.openweathermap.org/data/2.5/weather"
