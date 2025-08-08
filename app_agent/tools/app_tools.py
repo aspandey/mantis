@@ -40,6 +40,7 @@ def time_to_double_investment(principal: float, rate: float) -> float:
     """ A function which will be used as a tool to calculate time, in years, to double investment."""
     return 72 / rate
 
+
 # ============================
 from langchain_core.tools import tool, InjectedToolCallId
 from langgraph.types import Command
@@ -68,7 +69,7 @@ def create_handoff_tool(*, agent_name: str, description: str | None = None):
 # Handoffs
 transfer_to_portfolio_assistant = create_handoff_tool(
     agent_name="portfolio_assistant",
-    description="Transfer user to the equity portfolio assistant.",
+    description="Transfer user to the kite equity portfolio assistant.",
 )
 transfer_to_flight_assistant = create_handoff_tool(
     agent_name="flight_assistant",
@@ -90,12 +91,18 @@ def get_hotel_details(hotel_name: str) -> str:
     """Get details of a hotel"""
     return f"Details for {hotel_name}: 5-star hotel with pool, gym, and spa facilities."
 
+@tool
+def get_hotel_list() -> List[str]:
+    """Get a list of available hotels"""
+    return ["Hotel Sunshine", "Grand Plaza", "Ocean View Resort", "Mountain Retreat"]
+
 # ===========================
 
 HOTEL_TOOLS = [
     book_hotel,
     cancel_hotel_booking,
     get_hotel_details,
+    get_hotel_list,
 ]
 
 APP_TOOLS = [
