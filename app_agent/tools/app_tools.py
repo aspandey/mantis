@@ -1,5 +1,9 @@
 from typing import TypedDict, List, Annotated, Sequence
-from langchain_core.tools import tool
+
+from langchain_core.tools import tool, InjectedToolCallId
+from langgraph.types import Command
+from langgraph.graph import MessagesState
+from langgraph.prebuilt import InjectedState
 
 @tool
 def introduction() -> str:
@@ -40,13 +44,7 @@ def time_to_double_investment(principal: float, rate: float) -> float:
     """ A function which will be used as a tool to calculate time, in years, to double investment."""
     return 72 / rate
 
-
 # ============================
-from langchain_core.tools import tool, InjectedToolCallId
-from langgraph.types import Command
-from langgraph.graph import MessagesState
-from langgraph.prebuilt import InjectedState
-
 def create_handoff_tool(*, agent_name: str, description: str | None = None):
     name = f"transfer_to_{agent_name}"
     description = description or f"Transfer to {agent_name}"
@@ -66,7 +64,6 @@ def create_handoff_tool(*, agent_name: str, description: str | None = None):
         )
     return handoff_tool
 
-# Handoffs
 transfer_to_portfolio_assistant = create_handoff_tool(
     agent_name="portfolio_assistant",
     description="Transfer user to the kite equity portfolio assistant.",
@@ -96,7 +93,6 @@ def get_hotel_list() -> List[str]:
     """Get a list of available hotels"""
     return ["Hotel Sunshine", "Grand Plaza", "Ocean View Resort", "Mountain Retreat"]
 
-# ===========================
 
 HOTEL_TOOLS = [
     book_hotel,

@@ -1,5 +1,3 @@
-from fastapi import Request, Response
-from fastapi.responses import JSONResponse
 import requests
 from server.app_mcp import app_mcp
 from utils.app_config import get_api_key, api_key_loc

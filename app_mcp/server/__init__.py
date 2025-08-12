@@ -4,5 +4,5 @@ import server.mcp_logging
 import server.mcp_tools
 import server.mcp_resources
 import server.mcp_prompts
-import server.tools_func
+import server.app_tools_func
 

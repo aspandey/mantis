@@ -1,9 +1,5 @@
-from fastapi import Request, Response
-from fastapi.responses import JSONResponse
-import requests
 from server.app_mcp import app_mcp
-from utils.app_config import get_api_key, api_key_loc
-from server.tools_func import *
+from server.app_tools_func import *
 
 WEATHER_URL = "https://api.openweathermap.org/data/2.5/weather"
 
