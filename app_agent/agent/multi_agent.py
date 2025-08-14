@@ -1,24 +1,20 @@
 from typing import TypedDict, List, Annotated, Sequence
+import logging as dbg
+import asyncio
 
-from langchain_core.messages import AnyMessage, HumanMessage, SystemMessage, BaseMessage
+from langchain_core.messages import AnyMessage, HumanMessage, SystemMessage
 from langchain_ollama import ChatOllama
 from langgraph.graph import StateGraph, END, START, MessagesState
 from langgraph.graph.message import add_messages
-from langgraph.prebuilt import ToolNode, create_react_agent, InjectedState
-from typing import Annotated
-from langchain_core.tools import tool, InjectedToolCallId
-from langgraph.types import Command
-
-import logging as dbg
-import asyncio
-import utils.agent_config as app_config
+from langgraph.prebuilt import create_react_agent
 from langchain.tools import StructuredTool as LCTool
 
 from mcp_client.mcp_client import APP_MCPTools
-import asyncio
 import tools.app_tools as app_tools
-dbg = app_config.DEBUG_APP
+import utils.agent_config as app_config
+import utils.agent_utils as agent_utils
 
+dbg = app_config.DEBUG_APP
 GENERATIVE_MODEL = app_config.GENERATIVE_MODEL
 
 async def get_mcp_tools(servers: List[str]) -> List[LCTool]:
@@ -41,7 +37,8 @@ flight_assistant = create_react_agent(
     model=llm,
     tools=flight_tools,
     prompt="You are a flight booking assistant",
-    name="flight_assistant"
+    name="flight_assistant",
+    checkpointer=True,
 )
 
 # hotel_assistant = create_react_agent(
@@ -49,15 +46,10 @@ portfolio_assistant = create_react_agent(
     model=llm,
     tools=app_tools.HOTEL_TOOLS,
     prompt="You are a hotel booking assistant",
-    name="hotel_assistant"
+    name="hotel_assistant",
+    checkpointer=True,
 )
 
-# portfolio_assistant = create_react_agent(
-#     model=llm,
-#     tools=kite_tools,
-#     prompt="You are an assitant who provides information regarding equity portfolio of a user.",
-#     name="portfolio_assistant"
-# )
 
 # Define multi-agent graph
 multi_agent_graph = (
@@ -80,21 +72,8 @@ hum_msg = HumanMessage(
 )
 input_state = {"messages": [hum_msg]}
 
-def print_stream(stream) -> None:
-    """Prints each message from the stream in a readable format."""
-    for s in stream:
-        messages = s.get("messages", [])
-        if not messages:
-            print("No messages to display.")
-            continue
-        message = messages[-1]
-        if hasattr(message, "pretty_print") and callable(message.pretty_print):
-            message.pretty_print()
-        else:
-            print(str(message))
-
 async def main():
-    print("Welcome!! I am Tigress, Your Agent.")
+    print("Welcome!! I am Your Agent.")
     print(f"Type 'bye' to quit.")
     while True:
         user_input = input(f"You : ")
@@ -104,7 +83,7 @@ async def main():
             break
         input_state = {"messages": [HumanMessage(content=user_input)]}
         results = [item async for item in multi_agent_graph.astream(input_state, stream_mode="values")]
-        print_stream(results)
+        agent_utils.print_state_messages(results)
 
 if __name__ == "__main__":
     asyncio.run(main())

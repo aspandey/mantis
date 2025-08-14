@@ -1,4 +1,4 @@
-from typing import TypedDict, List, Annotated, Sequence
+from typing import TypedDict, List, Annotated, Sequence, Any
 
 from langchain_core.messages import BaseMessage
 from langchain_core.messages import HumanMessage
@@ -17,6 +17,7 @@ from langchain.tools import StructuredTool as LCTool
 
 from mcp_client.mcp_client import APP_MCPTools
 import tools.app_tools as app_tools
+import utils.agent_utils as agent_utils
 dbg = app_config.DEBUG_APP
 
 GENERATIVE_MODEL = app_config.GENERATIVE_MODEL
@@ -115,19 +116,6 @@ app = create_and_compile_graph()
 
 config = RunnableConfig(configurable={"thread_id": "1"})
 
-def print_stream(stream) -> None:
-    """Prints each message from the stream in a readable format."""
-    for s in stream:
-        messages = s.get("messages", [])
-        if not messages:
-            print("No messages to display.")
-            continue
-        message = messages[-1]
-        if hasattr(message, "pretty_print") and callable(message.pretty_print):
-            message.pretty_print()
-        else:
-            print(str(message))
-
 async def main():
     print("Welcome!! I am Tigress, Your Agent.")
     print(f"Type 'bye' to quit.")
@@ -139,7 +127,7 @@ async def main():
             break
         input_state = {"messages": [HumanMessage(content=user_input)]}
         results = [item async for item in app.astream(input_state, stream_mode="values", config=config)]
-        print_stream(results)
+        agent_utils.print_state_messages(results)
 
 if __name__ == "__main__":
     asyncio.run(main())
