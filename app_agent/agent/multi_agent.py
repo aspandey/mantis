@@ -8,6 +8,7 @@ from langgraph.graph import StateGraph, END, START, MessagesState
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import create_react_agent
 from langchain.tools import StructuredTool as LCTool
+from langchain_core.runnables import RunnableConfig
 
 from mcp_client.mcp_client import APP_MCPTools
 import tools.app_tools as app_tools
@@ -38,7 +39,6 @@ flight_assistant = create_react_agent(
     tools=flight_tools,
     prompt="You are a flight booking assistant",
     name="flight_assistant",
-    checkpointer=True,
 )
 
 # hotel_assistant = create_react_agent(
@@ -47,9 +47,7 @@ portfolio_assistant = create_react_agent(
     tools=app_tools.HOTEL_TOOLS,
     prompt="You are a hotel booking assistant",
     name="hotel_assistant",
-    checkpointer=True,
 )
-
 
 # Define multi-agent graph
 multi_agent_graph = (
@@ -72,6 +70,8 @@ hum_msg = HumanMessage(
 )
 input_state = {"messages": [hum_msg]}
 
+config = RunnableConfig(configurable={"thread_id": "1"})
+
 async def main():
     print("Welcome!! I am Your Agent.")
     print(f"Type 'bye' to quit.")
@@ -82,7 +82,7 @@ async def main():
             dbg.info(f"No more request, going to end node\n")
             break
         input_state = {"messages": [HumanMessage(content=user_input)]}
-        results = [item async for item in multi_agent_graph.astream(input_state, stream_mode="values")]
+        results = [item async for item in multi_agent_graph.astream(input_state, stream_mode="values", config=config)]
         agent_utils.print_state_messages(results)
 
 if __name__ == "__main__":
