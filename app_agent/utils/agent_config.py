@@ -21,11 +21,3 @@ DEBUG_APP.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(funcName)s- %(message)s",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-# server_list = [*MCP_SERVERS.values()]
-# print(f"Using MCP servers: {server_list}")
-# for server_name, server_url in MCP_SERVERS.items():
-#     if not server_url.startswith("http"):
-#         raise ValueError(f"Invalid URL for {server_name}: {server_url}")
-#     print(f"Configured {server_name} MCP server: {server_url}")
-
-# print(f"Using Generative Model: {GENERATIVE_MODEL}")

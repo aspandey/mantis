@@ -134,7 +134,7 @@ if __name__ == "__main__":
 
 
 # Run agent as module from parent directory which contains all other modules.
-# p3 -m agent.agent
+# p3 -m agent.single_agent
 
 
 
