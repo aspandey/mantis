@@ -15,6 +15,11 @@ import tools.app_tools as app_tools
 import utils.agent_config as app_config
 import utils.agent_utils as agent_utils
 
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.graph import StateGraph
+
+checkpointer = InMemorySaver()
+
 dbg = app_config.DEBUG_APP
 GENERATIVE_MODEL = app_config.GENERATIVE_MODEL
 
@@ -55,7 +60,7 @@ multi_agent_graph = (
     .add_node(flight_assistant)
     .add_node(portfolio_assistant)
     .add_edge(START, "flight_assistant")
-    .compile()
+    .compile(checkpointer=checkpointer)
 )
 
 class MessagesState(TypedDict):
@@ -87,7 +92,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-
 
 # Run agent as module from parent directory which contains all other modules.
 # p3 -m agent.multi_agent
