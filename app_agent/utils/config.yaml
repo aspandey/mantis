@@ -15,4 +15,4 @@ MCP_SERVERS: {
 }
 
 # Logging configuration
-AGENT_LOG_FILE: "/var/log/agent.log"
+AGENT_LOG_FILE: "/var/log/agent.logs"

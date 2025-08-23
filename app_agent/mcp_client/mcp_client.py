@@ -41,7 +41,7 @@ class APP_MCPTools:
                 dbg.info(f"Fetching tools from MCP server: {server}")
                 mcp_tools = await self.get_tools_from_mcp_server(server)
                 for tool in mcp_tools:
-                    dbg.info(f"MCP Tool = {tool}")
+                    # dbg.info(f"MCP Tool = {tool}")
                     lc_tool = self.mcp_tool_to_langchain_tool(tool, server)
                     self.mcp_to_langchain_tools.append(lc_tool)
             except requests.exceptions.RequestException as e:
@@ -88,7 +88,8 @@ KITE_MCP_SERVER = "https://mcp.kite.trade/sse"
 LOCAL_MCP_SERVER = "http://127.0.0.1:8000/district"
 
 async def main():
-    servers = [LOCAL_MCP_SERVER, KITE_MCP_SERVER]
+    # servers = [LOCAL_MCP_SERVER, KITE_MCP_SERVER]
+    servers = [LOCAL_MCP_SERVER]
     mcp_client = await APP_MCPTools.create(servers)
     print(f"\nTools provided by MCP Servers {servers} :\n")
     print(f"Number of tools = {len(mcp_client.tools)}")

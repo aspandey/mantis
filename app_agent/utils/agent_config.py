@@ -14,7 +14,7 @@ OLLAMA_API = con.get("OLLAMA_API", "http://localhost:11434/api")
 
 MCP_SERVERS = con.get("MCP_SERVERS", {"local": "http://127.0.0.1:8000/app"})
 
-LOG_FILE = con.get("AGENT_LOG_FILE", "/var/logs/agent_tigress.log")
+LOG_FILE = con.get("AGENT_LOG_FILE", "/var/log/agent.logs")
 DEBUG_APP.basicConfig(
     filename=LOG_FILE,
     level=DEBUG_APP.INFO,

@@ -1,4 +1,4 @@
-from typing import TypedDict, List, Annotated, Sequence
+from typing import TypedDict, List, Annotated
 import logging as dbg
 import asyncio
 
@@ -28,10 +28,11 @@ async def get_mcp_tools(servers: List[str]) -> List[LCTool]:
     return mcp_tools.tools
 
 flight_tools = asyncio.run(get_mcp_tools([app_config.MCP_SERVERS["flight"]]))
-flight_tools = [app_tools.transfer_to_portfolio_assistant] + flight_tools
+flight_tools = [app_tools.transfer_to_hotel_assistant] + flight_tools
 
-kite_tools = asyncio.run(get_mcp_tools([app_config.MCP_SERVERS["kite"]]))
-kite_tools = [app_tools.transfer_to_flight_assistant] + kite_tools
+hotel_tools = [app_tools.transfer_to_flight_assistant] + app_tools.HOTEL_TOOLS
+# kite_tools = asyncio.run(get_mcp_tools([app_config.MCP_SERVERS["kite"]]))
+# kite_tools = [app_tools.transfer_to_flight_assistant] + kite_tools
 
 llm = ChatOllama(
     model=GENERATIVE_MODEL,
@@ -46,25 +47,42 @@ flight_assistant = create_react_agent(
     name="flight_assistant",
 )
 
-# hotel_assistant = create_react_agent(
-portfolio_assistant = create_react_agent(
+# portfolio_assistant = create_react_agent(
+hotel_assistant = create_react_agent(
     model=llm,
-    tools=app_tools.HOTEL_TOOLS,
+    tools=hotel_tools,
     prompt="You are a hotel booking assistant",
     name="hotel_assistant",
 )
 
 # Define multi-agent graph
-multi_agent_graph = (
-    StateGraph(MessagesState)
-    .add_node(flight_assistant)
-    .add_node(portfolio_assistant)
-    .add_edge(START, "flight_assistant")
-    .compile(checkpointer=checkpointer)
-)
+# multi_agent_graph = (
+#     StateGraph(MessagesState)
+#     .add_node(flight_assistant)
+#     .add_node(hotel_assistant)
+#     .add_edge(START, "hotel_assistant")
+#     .compile(checkpointer=checkpointer)
+# )
 
-class MessagesState(TypedDict):
+class AgentState(TypedDict):
     messages: Annotated[list[AnyMessage], add_messages]
+
+def create_and_compile_graph():
+    """
+    Creates and compiles a state graph for an agent workflow.
+    Returns:
+        app: The compiled application representing the agent's workflow state graph.
+    """
+    graph = StateGraph(AgentState)
+    graph.add_node("flight_assistant", flight_assistant)
+    graph.add_node("hotel_assistant", hotel_assistant)
+    graph.add_edge(START, "hotel_assistant")
+    # graph.set_entry_point("hotel_assistant")
+    app = graph.compile(checkpointer=checkpointer)
+    return app
+
+
+multi_agent_graph = create_and_compile_graph()
 
 sys_msg = SystemMessage(
     content="You are a multi-agent system. You can transfer the user to different agents based on their requests. \
@@ -78,7 +96,7 @@ input_state = {"messages": [hum_msg]}
 config = RunnableConfig(configurable={"thread_id": "1"})
 
 async def main():
-    print("Welcome!! I am Your Agent.")
+    print("Welcome to Flights and HOtel Booking Agent.")
     print(f"Type 'bye' to quit.")
     while True:
         user_input = input(f"You : ")
